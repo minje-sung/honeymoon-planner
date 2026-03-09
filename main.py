@@ -7,6 +7,8 @@ nest_asyncio.apply()
 
 from dotenv import load_dotenv
 load_dotenv("/Users/minje/.env.shared/.env.honeymoon")
+
+import streamlit as st
 from openai import AsyncOpenAI
 from agents import Runner, trace
 from agents import InputGuardrailTripwireTriggered
