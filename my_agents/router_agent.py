@@ -8,9 +8,9 @@ from agents import (
     input_guardrail,
 )
 
-from agents.flight_agent import flight_agent
-from agents.hotel_agent import hotel_agent
-from agents.schedule_agent import schedule_agent
+from my_agents.flight_agent import flight_agent
+from my_agents.hotel_agent import hotel_agent
+from my_agents.schedule_agent import schedule_agent
 from prompts.system_prompts import GUARDRAIL_PROMPT, ROUTER_PROMPT
 
 # 新婚旅行関連チェック用エージェント
