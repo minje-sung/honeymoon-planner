@@ -1,7 +1,6 @@
 import asyncio
 import json
 import re
-import threading
 
 
 from dotenv import load_dotenv
@@ -962,28 +961,16 @@ def process_chat(user_input: str):
     with st.chat_message("assistant", avatar="💍"):
         placeholder = st.empty()
         try:
-            result = {}
-            def _run():
-                loop = asyncio.new_event_loop()
-                asyncio.set_event_loop(loop)
-                try:
-                    result["response"], result["history"] = loop.run_until_complete(
-                        run_agent(st.session_state.sdk_history, user_input, placeholder)
-                    )
-                    result["extracted"] = loop.run_until_complete(
-                        extract_plan_data(result["response"])
-                    )
-                finally:
-                    loop.close()
-
-            t = threading.Thread(target=_run)
-            t.start()
-            t.join()
-            response = result["response"]
-            new_history = result["history"]
-            extracted = result.get("extracted")
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            response, new_history = loop.run_until_complete(
+                run_agent(st.session_state.sdk_history, user_input, placeholder)
+            )
             st.session_state.messages.append({"role": "assistant", "content": response})
             st.session_state.sdk_history = new_history
+            extracted = loop.run_until_complete(
+                extract_plan_data(response)
+            )
             if extracted:
                 update_plan(extracted)
 
