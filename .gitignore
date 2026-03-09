@@ -9,4 +9,6 @@ wheels/
 # Virtual environments
 .venv
 .env
-.venv
+
+# 外部MCPサーバー（クローン済み）
+mcp_servers/

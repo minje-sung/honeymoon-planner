@@ -1,0 +1,201 @@
+- generic "Google マップ" [ref=e9]:
+  - generic [ref=e3]:
+    - application "地図·矢印キーで地図を移動します。·対応する数字キーを押して場所の詳細情報を確認します。" [ref=e10]
+    - generic [ref=e8]:
+      - search [ref=e15]:
+        - button "メニュー" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: 
+        - generic [ref=e19]:
+          - combobox [ref=e21]: ハワイ 観光スポット
+          - button "検索" [ref=e23] [cursor=pointer]:
+            - generic [ref=e24]: 
+          - button "閉じる" [ref=e26] [cursor=pointer]:
+            - generic [ref=e27]: 
+      - generic [ref=e30]:
+        - generic:
+          - button [ref=e31] [cursor=pointer]
+          - button "Show the Input Tools menu" [ref=e33] [cursor=pointer]
+    - generic [ref=e35]:
+      - main [ref=e41]:
+        - generic [ref=e42]:
+          - feed "「ハワイ 観光スポット」の検索結果" [ref=e43]:
+            - region "この検索で利用可能なフィルタ" [ref=e45]:
+              - generic [ref=e48]:
+                - button "評価" [active] [ref=e50] [cursor=pointer]:
+                  - generic [ref=e51]:
+                    - generic [ref=e53]: 評価
+                    - generic [ref=e54]: 
+                - button "時間" [ref=e56] [cursor=pointer]:
+                  - generic [ref=e57]:
+                    - generic [ref=e59]: 時間
+                    - generic [ref=e60]: 
+                - button "すべてのフィルタ" [ref=e62] [cursor=pointer]:
+                  - generic [ref=e63]:
+                    - generic [ref=e65]: 
+                    - generic [ref=e66]: すべてのフィルタ
+            - generic [ref=e67]:
+              - generic [ref=e69]:
+                - heading "結果" [level=1] [ref=e70]
+                - button "Google マップの公開のクチコミに関する法的開示の詳細" [ref=e74]:
+                  - generic [ref=e78]: 
+              - button "共有" [ref=e82]:
+                - generic [ref=e83] [cursor=pointer]:
+                  - generic [ref=e84]: 
+                  - generic [ref=e85]: 共有
+            - article "ハワイ火山国立公園" [ref=e87]:
+              - link "ハワイ火山国立公園" [ref=e88] [cursor=pointer]:
+                - /url: https://www.google.com/maps/place/%E3%83%8F%E3%83%AF%E3%82%A4%E7%81%AB%E5%B1%B1%E5%9B%BD%E7%AB%8B%E5%85%AC%E5%9C%92/data=!4m7!3m6!1s0x795161b6c0b9c9b1:0x3e5b7b263c84ae26!8m2!3d19.4963669!4d-155.4661859!16zL20vMDJyZ2Ix!19sChIJscm5wLZhUXkRJq6EPCZ7Wz4?authuser=0&hl=ja&rclk=1
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: ハワイ火山国立公園
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img "4.8 つ星 クチコミ 13,181 件":
+                                  - text: "4.8"
+                                  - text: (13,181)
+                          - generic:
+                            - generic:
+                              - generic: 観光名所
+                              - generic:
+                                - text: ·
+                                - img "車椅子対応の入り口があるお店" [ref=e89] [cursor=pointer]:
+                                  - generic [ref=e90]: 
+                            - generic:
+                              - generic: 溶岩洞、活火山、噴火口
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"粘度の高い溶岩が、草木を焼き尽くしながら流れた様子がよくわかる。\""
+            - article "ホノルル動物園" [ref=e93]:
+              - link "ホノルル動物園" [ref=e94] [cursor=pointer]:
+                - /url: https://www.google.com/maps/place/%E3%83%9B%E3%83%8E%E3%83%AB%E3%83%AB%E5%8B%95%E7%89%A9%E5%9C%92/data=!4m7!3m6!1s0x7c007270996bbf33:0xe61efec80f7e613a!8m2!3d21.2710896!4d-157.8214785!16zL20vMDF6aGxr!19sChIJM79rmXByAHwROmF-D8j-HuY?authuser=0&hl=ja&rclk=1
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: ホノルル動物園
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img "4.2 つ星 クチコミ 10,106 件":
+                                  - text: "4.2"
+                                  - text: (10,106)
+                          - generic:
+                            - generic:
+                              - generic: 観光名所
+                              - generic:
+                                - text: ·
+                                - img "車椅子対応の入り口があるお店" [ref=e95] [cursor=pointer]:
+                                  - generic [ref=e96]: 
+                              - generic: · 151 Kapahulu Ave
+                            - generic:
+                              - generic: 緑豊かな 42 エーカーの敷地に 900 種以上の動物を飼育
+                            - generic:
+                              - generic:
+                                - generic: "営業時間外 · 営業開始: 10:00"
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"所々に日陰やベンチもあるので、間で休憩を入れながら観て回ることもできます。\""
+            - article "クアロア・ランチ" [ref=e99]:
+              - link "クアロア・ランチ" [ref=e100] [cursor=pointer]:
+                - /url: https://www.google.com/maps/place/%E3%82%AF%E3%82%A2%E3%83%AD%E3%82%A2%E3%83%BB%E3%83%A9%E3%83%B3%E3%83%81/data=!4m7!3m6!1s0x7c004401d5b06d6b:0xfd4ad05c61e8fe78!8m2!3d21.5186627!4d-157.8533464!16zL20vMGM4bjN2!19sChIJa22w1QFEAHwReP7oYVzQSv0?authuser=0&hl=ja&rclk=1
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: クアロア・ランチ
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img "4.7 つ星 クチコミ 20,520 件":
+                                  - text: "4.7"
+                                  - text: (20,520)
+                          - generic:
+                            - generic:
+                              - generic: 観光名所
+                              - generic:
+                                - text: ·
+                                - img "車椅子対応の入り口があるお店" [ref=e101] [cursor=pointer]:
+                                  - generic [ref=e102]: 
+                            - generic:
+                              - generic: 映画のロケ地や公園のある広大な自然保護区
+                            - generic:
+                              - generic:
+                                - generic: "営業時間外 · 営業開始: 7:30"
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"ゆっくり周りの景色を見ながらのんびりEバイクに乗るわけではないです。\""
+            - article "カメハメハ大王像" [ref=e105]:
+              - link "カメハメハ大王像" [ref=e106] [cursor=pointer]:
+                - /url: https://www.google.com/maps/place/%E3%82%AB%E3%83%A1%E3%83%8F%E3%83%A1%E3%83%8F%E5%A4%A7%E7%8E%8B%E5%83%8F/data=!4m7!3m6!1s0x7c006e0ad94ef6f3:0x6a04e2cf6c7b42d!8m2!3d21.3057277!4d-157.8596457!16zL20vMDNkMXJ0!19sChIJ8_ZO2QpuAHwRLbTH9ixOoAY?authuser=0&hl=ja&rclk=1
+              - generic:
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic:
+                            - generic: カメハメハ大王像
+                          - generic:
+                            - generic:
+                              - generic:
+                                - img "4.6 つ星 クチコミ 3,134 件":
+                                  - text: "4.6"
+                                  - text: (3,134)
+                          - generic:
+                            - generic:
+                              - generic: 観光名所
+                              - generic:
+                                - text: ·
+                                - img "車椅子対応の入り口があるお店" [ref=e107] [cursor=pointer]:
+                                  - generic [ref=e108]: 
+                              - generic: · 447 S King St
+                            - generic:
+                              - generic: ハワイの初代国王を象った有名な像
+                  - generic:
+                    - generic:
+                      - generic:
+                        - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"ハワイを代表する観光スポットですので、一度は行かれることをおすすめします。\""
+          - heading "Google マップを最大限に活用しましょう ログイン" [level=2] [ref=e145]:
+            - generic [ref=e146]: Google マップを最大限に活用しましょう
+            - button "ログイン" [ref=e149] [cursor=pointer]:
+              - generic [ref=e151]: ログイン
+          - checkbox "地図の移動後に結果を更新" [ref=e153] [cursor=pointer]:
+            - generic [ref=e155]: 
+            - text: 地図の移動後に結果を更新
+      - button "サイドパネルを折りたたむ" [ref=e157] [cursor=pointer]:
+        - generic [ref=e158]: 
