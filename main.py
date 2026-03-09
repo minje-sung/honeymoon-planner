@@ -897,7 +897,7 @@ def render_plan_board():
 # ─────────────────────────────
 # エージェント実行
 # ─────────────────────────────
-async def _stream_agent(router, input_messages: list, chat_placeholder) -> tuple[str, list]:
+async def _stream_agent(router, input_messages: list, chat_placeholder) -> str:
     """ストリーミング実行の共通ロジック。ツール呼び出しを toast で通知。"""
     response_text = ""
     with trace("新婚旅行プランナー"):
@@ -925,12 +925,12 @@ async def _stream_agent(router, input_messages: list, chat_placeholder) -> tuple
                 st.toast(f"🔧 Tool Calling: `{tool_name}`\n{args_str}", icon="🔧")
 
     chat_placeholder.markdown(response_text)
-    return response_text, stream.to_input_list()
+    return response_text
 
 
-async def run_agent(sdk_history: list, user_input: str, chat_placeholder) -> tuple[str, list]:
+async def run_agent(user_input: str, chat_placeholder) -> str:
     """ストリーミング実行。Playwright MCP 起動失敗時はフォールバック。"""
-    input_messages = sdk_history + [{"role": "user", "content": user_input}]
+    input_messages = [{"role": "user", "content": user_input}]
 
     async with create_flight_mcp_server() as flight_mcp_server:
         flight_agent_with_mcp = flight_agent.clone(mcp_servers=[flight_mcp_server])
@@ -963,11 +963,10 @@ def process_chat(user_input: str):
         try:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            response, new_history = loop.run_until_complete(
-                run_agent(st.session_state.sdk_history, user_input, placeholder)
+            response = loop.run_until_complete(
+                run_agent(user_input, placeholder)
             )
             st.session_state.messages.append({"role": "assistant", "content": response})
-            st.session_state.sdk_history = new_history
             extracted = loop.run_until_complete(
                 extract_plan_data(response)
             )
