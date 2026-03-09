@@ -963,19 +963,16 @@ def process_chat(user_input: str):
         try:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
-            try:
-                response, new_history = loop.run_until_complete(
-                    run_agent(st.session_state.sdk_history, user_input, placeholder)
-                )
-                st.session_state.messages.append({"role": "assistant", "content": response})
-                st.session_state.sdk_history = new_history
-                extracted = loop.run_until_complete(
-                    extract_plan_data(response)
-                )
-                if extracted:
-                    update_plan(extracted)
-            finally:
-                loop.close()
+            response, new_history = loop.run_until_complete(
+                run_agent(st.session_state.sdk_history, user_input, placeholder)
+            )
+            st.session_state.messages.append({"role": "assistant", "content": response})
+            st.session_state.sdk_history = new_history
+            extracted = loop.run_until_complete(
+                extract_plan_data(response)
+            )
+            if extracted:
+                update_plan(extracted)
 
         except InputGuardrailTripwireTriggered:
             error_message = (
