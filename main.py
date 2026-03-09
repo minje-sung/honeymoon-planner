@@ -2,8 +2,6 @@ import asyncio
 import json
 import re
 
-import nest_asyncio
-nest_asyncio.apply()
 
 from dotenv import load_dotenv
 load_dotenv("/Users/minje/.env.shared/.env.honeymoon")
@@ -963,17 +961,21 @@ def process_chat(user_input: str):
     with st.chat_message("assistant", avatar="💍"):
         placeholder = st.empty()
         try:
-            response, new_history = asyncio.get_event_loop().run_until_complete(
-                run_agent(st.session_state.sdk_history, user_input, placeholder)
-            )
-            st.session_state.messages.append({"role": "assistant", "content": response})
-            st.session_state.sdk_history = new_history
-
-            extracted = asyncio.get_event_loop().run_until_complete(
-                extract_plan_data(response)
-            )
-            if extracted:
-                update_plan(extracted)
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+                response, new_history = loop.run_until_complete(
+                    run_agent(st.session_state.sdk_history, user_input, placeholder)
+                )
+                st.session_state.messages.append({"role": "assistant", "content": response})
+                st.session_state.sdk_history = new_history
+                extracted = loop.run_until_complete(
+                    extract_plan_data(response)
+                )
+                if extracted:
+                    update_plan(extracted)
+            finally:
+                loop.close()
 
         except InputGuardrailTripwireTriggered:
             error_message = (
