@@ -961,11 +961,15 @@ def process_chat(user_input: str):
     with st.chat_message("assistant", avatar="💍"):
         placeholder = st.empty()
         try:
+            print(f"[DEBUG] process_chat called. sdk_history length: {len(st.session_state.sdk_history)}", flush=True)
+            print(f"[DEBUG] messages length: {len(st.session_state.messages)}", flush=True)
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
+            print(f"[DEBUG] about to call run_agent", flush=True)
             response = loop.run_until_complete(
                 run_agent(user_input, placeholder)
             )
+            print(f"[DEBUG] run_agent done. response length: {len(response)}", flush=True)
             st.session_state.messages.append({"role": "assistant", "content": response})
             extracted = loop.run_until_complete(
                 extract_plan_data(response)
@@ -983,6 +987,7 @@ def process_chat(user_input: str):
             st.session_state.messages.append({"role": "assistant", "content": error_message})
 
         except Exception as error:
+            print(f"[DEBUG] Exception caught: {type(error).__name__}: {error}", flush=True)
             placeholder.error(f"エラーが発生しました：{str(error)}")
 
 
