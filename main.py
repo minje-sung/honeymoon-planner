@@ -16,10 +16,10 @@ from openai.types.responses import (
     ResponseFunctionToolCall,
 )
 
-from agents.router_agent import router_agent
-from agents.flight_agent import flight_agent
-from agents.hotel_agent import hotel_agent
-from agents.schedule_agent import schedule_agent
+from my_agents.router_agent import router_agent
+from my_agents.flight_agent import flight_agent
+from my_agents.hotel_agent import hotel_agent
+from my_agents.schedule_agent import schedule_agent
 from tools.mcp_config import create_flight_mcp_server, create_playwright_mcp_server
 
 # ─────────────────────────────
