@@ -10,6 +10,7 @@ IS_CLOUD = not Path(FLIGHTS_MCP_DIR).exists()
 
 
 class _DummyMCPServer:
+    name = "dummy"
     async def __aenter__(self):
         return self
     async def __aexit__(self, *args):
