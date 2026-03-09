@@ -56,7 +56,9 @@
                           - generic:
                             - generic:
                               - generic:
-                                - img "4.6 つ星": "4.6"
+                                - img "4.6 つ星 クチコミ 10,750 件":
+                                  - text: "4.6"
+                                  - text: (10,750)
                           - generic:
                             - generic:
                               - generic: 観光名所
@@ -74,6 +76,11 @@
                     - generic:
                       - generic:
                         - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"ナポリに来たら絶対に訪れるべきスポットです！\""
             - article "プレビシート広場" [ref=e93]:
               - link "プレビシート広場" [ref=e94] [cursor=pointer]:
                 - /url: https://www.google.com/maps/place/%E3%83%97%E3%83%AC%E3%83%93%E3%82%B7%E3%83%BC%E3%83%88%E5%BA%83%E5%A0%B4/data=!4m7!3m6!1s0x133b085255ec54b9:0x8ad9122a45803c14!8m2!3d40.8358256!4d14.2485831!16zL20vMDhxbHA1!19sChIJuVTsVVIIOxMRFDyARSoS2Yo?authuser=0&hl=ja&rclk=1
@@ -88,7 +95,9 @@
                           - generic:
                             - generic:
                               - generic:
-                                - img "4.7 つ星": "4.7"
+                                - img "4.7 つ星 クチコミ 88,114 件":
+                                  - text: "4.7"
+                                  - text: (88,114)
                           - generic:
                             - generic:
                               - generic: 広場
@@ -102,6 +111,11 @@
                     - generic:
                       - generic:
                         - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"昼間も良いけれど、ライトアップされた夜の雰囲気も良い。\""
             - article "国立考古学博物館" [ref=e99]:
               - link "国立考古学博物館" [ref=e100] [cursor=pointer]:
                 - /url: https://www.google.com/maps/place/%E5%9B%BD%E7%AB%8B%E8%80%83%E5%8F%A4%E5%AD%A6%E5%8D%9A%E7%89%A9%E9%A4%A8/data=!4m7!3m6!1s0x133b0867e2c94023:0xb48ecf1589057c98!8m2!3d40.8535985!4d14.2505254!16zL20vMDRfNWsy!19sChIJI0DJ4mcIOxMRmHwFiRXPjrQ?authuser=0&hl=ja&rclk=1
@@ -116,7 +130,9 @@
                           - generic:
                             - generic:
                               - generic:
-                                - img "4.6 つ星": "4.6"
+                                - img "4.6 つ星 クチコミ 35,825 件":
+                                  - text: "4.6"
+                                  - text: (35,825)
                           - generic:
                             - generic:
                               - generic: 観光名所
@@ -134,6 +150,11 @@
                     - generic:
                       - generic:
                         - img
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"ポンペイの遺跡からの発掘品も併せ、ナポリで必見の場と思います。\""
             - article "ヌオーヴォ城" [ref=e105]:
               - link "ヌオーヴォ城" [ref=e106] [cursor=pointer]:
                 - /url: https://www.google.com/maps/place/%E3%83%8C%E3%82%AA%E3%83%BC%E3%83%B4%E3%82%A9%E5%9F%8E/data=!4m7!3m6!1s0x133b084e6e5d6497:0xc131a1902329c922!8m2!3d40.8384891!4d14.2527194!16zL20vMGd4amdy!19sChIJl2Rdbk4IOxMRIskpI5ChMcE?authuser=0&hl=ja&rclk=1
@@ -148,7 +169,9 @@
                           - generic:
                             - generic:
                               - generic:
-                                - img "4.4 つ星": "4.4"
+                                - img "4.4 つ星 クチコミ 34,955 件":
+                                  - text: "4.4"
+                                  - text: (34,955)
                           - generic:
                             - generic:
                               - generic: 観光名所
@@ -166,17 +189,44 @@
                     - generic:
                       - generic:
                         - img
-          - generic [ref=e144]:
-            - generic [ref=e146]: 
-            - generic [ref=e147]:
-              - text: Google マップの表示が制限されています。
-              - button "表示の制限についての詳細に関するページが開きます" [ref=e148] [cursor=pointer]: 詳細
-          - heading "Google マップを最大限に活用しましょう ログイン" [level=2] [ref=e152]:
-            - generic [ref=e153]: Google マップを最大限に活用しましょう
-            - button "ログイン" [ref=e156] [cursor=pointer]:
-              - generic [ref=e158]: ログイン
-          - checkbox "地図の移動後に結果を更新" [ref=e160] [cursor=pointer]:
-            - generic [ref=e162]: 
+                - generic:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic: "\"自分はナポリとポンペイの中間地点のエルコラーノを宿泊拠点として周った。\""
+          - heading "Google マップを最大限に活用しましょう ログイン" [level=2] [ref=e145]:
+            - generic [ref=e146]: Google マップを最大限に活用しましょう
+            - button "ログイン" [ref=e149] [cursor=pointer]:
+              - generic [ref=e151]: ログイン
+          - checkbox "地図の移動後に結果を更新" [ref=e153] [cursor=pointer]:
+            - generic [ref=e155]: 
             - text: 地図の移動後に結果を更新
-      - button "サイドパネルを折りたたむ" [ref=e164] [cursor=pointer]:
-        - generic [ref=e165]: 
+      - button "サイドパネルを折りたたむ" [ref=e157] [cursor=pointer]:
+        - generic [ref=e158]: 
+    - generic [ref=e162]:
+      - button "Google アプリ" [ref=e166] [cursor=pointer]:
+        - img [ref=e167]
+      - link "ログイン" [ref=e170] [cursor=pointer]:
+        - /url: https://accounts.google.com/ServiceLogin?hl=ja&passive=true&continue=https%3A%2F%2Fwww.google.com%2Fmaps%2Fsearch%2F%25E3%2583%258A%25E3%2583%259D%25E3%2583%25AA%2B%25E8%25A6%25B3%25E5%2585%2589%25E3%2582%25B9%25E3%2583%259D%25E3%2583%2583%25E3%2583%2588&service=local&ec=GAZAcQ
+    - generic [ref=e171]:
+      - generic:
+        - button "現在地を表示" [ref=e174] [cursor=pointer]:
+          - generic [ref=e176]: 
+        - generic [ref=e178] [cursor=pointer]:
+          - button "ズームイン" [ref=e179]
+          - button "ズームアウト" [ref=e182]
+      - button "ストリートビューの画像をブラウジング" [ref=e190]
+      - generic [ref=e196]:
+        - generic "インタラクティブな地図" [ref=e197]
+        - generic [ref=e201] [cursor=pointer]:
+          - generic [ref=e202]: 
+          - generic [ref=e203]: レイヤ
+        - button "レイヤ" [ref=e204] [cursor=pointer]
+    - generic [ref=e206]:
+      - contentinfo [ref=e209]:
+        - text: 画像 ©2026 、地図データ ©2026
+        - button "日本" [ref=e210] [cursor=pointer]
+        - button "利用規約" [ref=e211] [cursor=pointer]
+        - button "プライバシー" [ref=e212] [cursor=pointer]
+        - button "プロダクトに関するフィードバックを送信" [ref=e213] [cursor=pointer]
+      - button "500 m" [ref=e215] [cursor=pointer]: 500 m
