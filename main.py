@@ -5,16 +5,8 @@ import re
 import nest_asyncio
 nest_asyncio.apply()
 
-import os
 from dotenv import load_dotenv
-load_dotenv()
-
-import streamlit as st
-try:
-    if hasattr(st, 'secrets') and 'OPENAI_API_KEY' in st.secrets:
-        os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
-except Exception:
-    pass
+load_dotenv("/Users/minje/.env.shared/.env.honeymoon")
 from openai import AsyncOpenAI
 from agents import Runner, trace
 from agents import InputGuardrailTripwireTriggered
