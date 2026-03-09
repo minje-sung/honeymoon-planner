@@ -929,13 +929,18 @@ async def _stream_agent(router, input_messages: list, chat_placeholder) -> str:
 
 
 async def run_agent(user_input: str, chat_placeholder) -> str:
-    """ストリーミング実行。Playwright MCP 起動失敗時はフォールバック。"""
+    """ストリーミング実行。Cloud環境ではMCPなし、ローカルではMCP付きで実行。"""
+    from tools.mcp_config import IS_CLOUD
     input_messages = [{"role": "user", "content": user_input}]
+
+    if IS_CLOUD:
+        router = router_agent.clone(
+            handoffs=[flight_agent, hotel_agent, schedule_agent]
+        )
+        return await _stream_agent(router, input_messages, chat_placeholder)
 
     async with create_flight_mcp_server() as flight_mcp_server:
         flight_agent_with_mcp = flight_agent.clone(mcp_servers=[flight_mcp_server])
-
-        # Playwright MCP は別途起動し、失敗時はフォールバック
         try:
             async with create_playwright_mcp_server() as playwright_mcp_server:
                 schedule_agent_with_mcp = schedule_agent.clone(mcp_servers=[playwright_mcp_server])
@@ -944,7 +949,6 @@ async def run_agent(user_input: str, chat_placeholder) -> str:
                 )
                 return await _stream_agent(router, input_messages, chat_placeholder)
         except Exception:
-            # Playwright MCP 起動失敗時はスケジュールエージェントを MCP なしで動かす
             router = router_agent.clone(
                 handoffs=[flight_agent_with_mcp, hotel_agent, schedule_agent]
             )
