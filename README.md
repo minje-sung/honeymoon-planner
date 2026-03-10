@@ -1,173 +1,316 @@
-# 💍 新婚旅行プランナー
-### Honeymoon Planner AI Agent
+# 新婚旅行プランナー / Honeymoon Planner
 
-新婚カップルのためのAI旅行プランニングアシスタント
+> OpenAI Agents SDK を使ったマルチエージェント旅行プランニングアシスタント  
+> A multi-agent travel planning assistant built with OpenAI Agents SDK
 
-![Python](https://img.shields.io/badge/Python-3.9%2B-blue)
-![Streamlit](https://img.shields.io/badge/UI-Streamlit-red)
-![OpenAI Agents SDK](https://img.shields.io/badge/Framework-OpenAI%20Agents%20SDK-green)
-
----
-
-## デモ
-
-> スクリーンショット／GIF は後から差し替え予定
-
-<!-- ![チャット画面](docs/screenshot_chat.png) -->
-<!-- ![Plan Board 自動更新](docs/demo.gif) -->
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://honeymoon-planner.streamlit.app)
+[![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org)
+[![OpenAI Agents SDK](https://img.shields.io/badge/OpenAI_Agents_SDK-latest-green)](https://github.com/openai/openai-agents-python)
 
 ---
 
-## 概要 (Overview)
-
-**何ができるか：**
-
-- ✈️ **フライト検索** — Duffel API による実際の航空券リアルタイム検索
-- 🏨 **ホテル提案** — ハネムーン向けリゾート・スイートルーム推薦
-- 📅 **スケジュール作成** — Playwright で観光サイトを実際にブラウズして最新情報取得
-- 🗺️ **Plan Board** — サイドバーで旅行計画をリアルタイム自動更新・確定管理
-
-**アーキテクチャの特徴：**
-
-- マルチエージェント構成（Router → Flight / Hotel / Schedule）
-- 入力ガードレール（新婚旅行無関係な質問を自動ブロック）
-- MCP (Model Context Protocol) で外部ツール連携
+## 日本語 | [English](#english)
 
 ---
 
-## システム構成図
+## 概要
+
+新婚旅行の計画をチャットで完結できる AI アシスタントです。ユーザーの質問を分析し、航空便・ホテル・旅行日程の 3 領域を担当する専門エージェントに自動で振り分けます。会話の内容はリアルタイムでサイドバーの **Plan Board** に構造化されて表示されます。
+
+## アーキテクチャ
 
 ```
 ユーザー入力
-    ↓
-Router Agent（振り分け + ガードレール）
-    ├─ Flight Agent  ── Flights MCP (Duffel API)
-    ├─ Hotel Agent   ── Web Search
-    └─ Schedule Agent── Playwright MCP（実ブラウザ）
-
-Plan Board（サイドバー）
-← extract_plan_data() で応答を自動パース → update_plan()
+     │
+     ▼
+[Input Guardrail] ── 新婚旅行と無関係な質問をここでブロック
+     │
+     ▼
+Router Agent (honeymoon_planner)
+     │
+     ├─ handoff ──▶ Flight Agent   [WebSearchTool + get_destination_info + flights-mcp]
+     ├─ handoff ──▶ Hotel Agent    [WebSearchTool + get_destination_info]
+     └─ handoff ──▶ Schedule Agent [get_destination_info + Playwright MCP]
+                                              ↓
+                                   Google マップをリアルタイム検索して観光地情報を取得
 ```
 
 ---
 
-## 技術スタック (Tech Stack)
+## 開発時に重要だったポイント
+
+### 1. Handoff — 専門エージェントへの委任
+
+一つの巨大なエージェントではなく、役割を分離した専門エージェントに委任する構造を採用しました。
+
+```python
+router_agent = Agent(
+    name="honeymoon_planner",
+    handoffs=[flight_agent, hotel_agent, schedule_agent],
+)
+```
+
+SDK は `handoffs` リストから `transfer_to_flight_agent` などのツールを自動生成します。各エージェントのプロンプトが小さくなり精度が上がるだけでなく、後から新しい専門エージェント（例：旅行保険エージェント）を追加するのも容易です。
+
+---
+
+### 2. Input Guardrail — メインエージェントに到達する前にブロック
+
+新婚旅行と無関係な質問を、メインエージェントが処理する前にブロックします。
+
+```python
+@input_guardrail
+async def honeymoon_guardrail(context, agent, input):
+    result = await Runner.run(guardrail_agent, input)  # 軽量な判定エージェント
+    is_irrelevant = "関連なし" in result.final_output
+    return GuardrailFunctionOutput(tripwire_triggered=is_irrelevant)
+```
+
+判定自体も別の軽量エージェント（`guardrail_agent`）が担当します。メインエージェントを動かす前にブロックできるため、無駄な API コストが発生しません。`InputGuardrailTripwireTriggered` 例外をキャッチして、UI で丁寧なメッセージを表示します。
+
+---
+
+### 3. MCP — 2 種類の異なる連携方式
+
+このプロジェクトでは性格の異なる 2 つの MCP を使用しています。
+
+| | flights-mcp | Playwright MCP |
+|---|---|---|
+| 役割 | 実際の航空便検索 | ブラウザ操作で Google マップをリアルタイム検索 |
+| 実行方式 | `uv run`（ローカルソース） | `npx @playwright/mcp@latest`（自動ダウンロード） |
+| 注入先 | Flight Agent | Schedule Agent |
+
+エージェント実行時に MCP サーバーを `async with` で起動し、`clone(mcp_servers=[...])` でエージェントに注入します。Playwright MCP は起動失敗時に自動でフォールバックするよう実装しています。
+
+```python
+async with create_flight_mcp_server() as flight_mcp:
+    flight_agent_with_mcp = flight_agent.clone(mcp_servers=[flight_mcp])
+```
+
+---
+
+### 4. Streaming + ツール通知 — リアルタイムフィードバック
+
+`Runner.run_streamed()` でテキストをトークン単位で表示し、ツール呼び出し時は `st.toast()` で通知します。
+
+```python
+async for event in stream.stream_events():
+    if isinstance(event.data, ResponseTextDeltaEvent):
+        placeholder.markdown(response_text + "▌")   # カーソル演出
+    elif isinstance(event.data, ResponseOutputItemDoneEvent):
+        st.toast(f"🔧 Tool: {tool_name}")            # どのツールが呼ばれたか表示
+```
+
+---
+
+### 5. Trace — 実行フローの可視化
+
+```python
+with trace("新婚旅行プランナー"):
+    stream = Runner.run_streamed(router_agent, messages)
+```
+
+`with trace("名前")` で囲むだけで、OpenAI Traces ダッシュボードに実行フローが記録されます。どのエージェントに handoff されたか、どのツールが呼ばれたか、何秒かかったかが一目でわかります。
+
+---
+
+### 6. Plan Board — 自然言語応答から構造化データを抽出
+
+エージェントの自然言語応答を、別途 LLM を呼び出して JSON に変換し、サイドバーのプランボードに反映します。
+
+```python
+async def extract_plan_data(response_text: str) -> dict:
+    # gpt-4o-mini に応答テキストを渡し、航空便・ホテル・日程情報を JSON で抽出
+```
+
+確定済みの航空便・ホテルは `flight_confirmed` フラグで保護し、以降の会話で上書きされないようにしています。
+
+---
+
+### 7. ローカル / Cloud 環境の自動分岐
+
+ローカル開発では `.env` から API キーを読み込み、Streamlit Cloud では `st.secrets` から読み込む二重対応です。MCP サーバーも `mcp_servers/` フォルダの存在有無で環境を判定し、Cloud では自動的にダミーサーバーに切り替わります（`deploy` ブランチ）。
+
+---
+
+## 技術スタック
 
 | カテゴリ | 技術 |
-|----------|------|
-| フレームワーク | OpenAI Agents SDK |
-| UI | Streamlit |
+|---|---|
+| AI フレームワーク | OpenAI Agents SDK |
 | LLM | GPT-4o-mini |
-| フライト検索 | Duffel API (via MCP) |
-| ブラウザ自動化 | Playwright MCP |
-| パッケージ管理 | uv |
-| Python | 3.9+ |
+| UI | Streamlit |
+| MCP | flights-mcp, Playwright MCP |
+| モニタリング | OpenAI Traces |
+| デプロイ | Streamlit Cloud |
 
 ---
 
-## セットアップ (Setup)
-
-### 前提条件
-
-- Python 3.9 以上
-- [uv](https://github.com/astral-sh/uv) のインストール
-- Node.js（Playwright MCP 使用時）
-
-### インストール手順
+## ローカル実行
 
 ```bash
-# リポジトリをクローン
-git clone https://github.com/minje-sung/honeymoon-planner.git
+git clone https://github.com/minje-sung/honeymoon-planner
 cd honeymoon-planner
-
-# 依存パッケージのインストール
 uv sync
-
-# 環境変数の設定
 cp .env.example .env
-# .env を編集して API キーを設定
-```
-
-### 環境変数
-
-`.env` ファイルに以下を設定：
-
-```env
-OPENAI_API_KEY=your_openai_api_key_here
-DUFFEL_API_KEY_LIVE=your_duffel_api_key_here   # フライト検索に必要
-```
-
-- **OPENAI_API_KEY**: [OpenAI Platform](https://platform.openai.com) で取得
-- **DUFFEL_API_KEY_LIVE**: [Duffel](https://duffel.com) で取得（フライト検索機能を使う場合のみ必須）
-
----
-
-## 起動方法 (Usage)
-
-```bash
+# .env に OPENAI_API_KEY を記入
 uv run streamlit run main.py
 ```
 
-ブラウザで `http://localhost:8501` を開く。
-
-### 使い方
-
-1. チャット欄に新婚旅行の希望を入力（例：「ナポリに7泊したい」）
-2. AI が自動的に適切なエージェントに振り分けてフライト・ホテル・スケジュールを提案
-3. サイドバーの **Plan Board** に情報が自動反映される
-4. 気に入ったプランは「✅ この内容で確定」ボタンで確定
+---
 
 ---
 
-## プロジェクト構成 (Structure)
+<a name="english"></a>
+
+## English | [日本語](#日本語--english)
+
+---
+
+## Overview
+
+An AI assistant that helps you plan your honeymoon entirely through chat. It analyzes user input and automatically routes questions to specialized agents handling flights, hotels, and travel itineraries. Conversation content is structured in real time and displayed in the sidebar **Plan Board**.
+
+## Architecture
 
 ```
-honeymoon-planner/
-├── main.py                  # Streamlit アプリ本体
-├── agents/                  # エージェント定義
-│   ├── router_agent.py      # 振り分けエージェント（ガードレール付き）
-│   ├── flight_agent.py      # フライト専門
-│   ├── hotel_agent.py       # ホテル専門
-│   └── schedule_agent.py    # 日程計画専門
-├── prompts/
-│   └── system_prompts.py    # 全エージェントのシステムプロンプト
-├── tools/
-│   ├── search_tool.py       # Web 検索 & 目的地情報
-│   └── mcp_config.py        # MCP サーバー設定
-└── mcp_servers/
-    └── flights-mcp/         # Duffel API ラッパー（MCP サーバー）
+User Input
+     │
+     ▼
+[Input Guardrail] ── Blocks unrelated questions before they reach the main agent
+     │
+     ▼
+Router Agent (honeymoon_planner)
+     │
+     ├─ handoff ──▶ Flight Agent   [WebSearchTool + get_destination_info + flights-mcp]
+     ├─ handoff ──▶ Hotel Agent    [WebSearchTool + get_destination_info]
+     └─ handoff ──▶ Schedule Agent [get_destination_info + Playwright MCP]
+                                              ↓
+                                   Real-time Google Maps search for attraction data
 ```
 
 ---
 
-## 対応目的地 (Built-in Destinations)
+## Key Development Points
 
-以下の目的地はオフライン情報込みで対応済み：
+### 1. Handoff — Delegating to Specialized Agents
 
-| 目的地 | ベストシーズン | 予算目安 |
-|--------|--------------|---------|
-| ハワイ | 4〜10月 | 30〜80万円 |
-| バリ島 | 4〜10月 | 20〜60万円 |
-| モルディブ | 11〜4月 | 60〜200万円 |
-| パリ | 4〜6月、9〜10月 | 40〜100万円 |
-| イタリア | 4〜6月、9〜10月 | 40〜100万円 |
-| プーケット | 11〜4月 | 20〜50万円 |
+Instead of a single monolithic agent, the system delegates to specialized agents with clearly separated responsibilities.
 
----
+```python
+router_agent = Agent(
+    name="honeymoon_planner",
+    handoffs=[flight_agent, hotel_agent, schedule_agent],
+)
+```
 
-## Streamlit Cloud デプロイ
-
-`deploy` ブランチにデプロイ用の設定が含まれています。
-
-- MCP サーバーは Cloud 環境では自動スキップ（`IS_CLOUD` フラグ）
-- `OPENAI_API_KEY` は Streamlit Cloud の Secrets で設定
+The SDK automatically generates tools like `transfer_to_flight_agent` from the `handoffs` list. Each agent's prompt stays small and focused, improving accuracy. Adding new agents later (e.g., a travel insurance agent) is straightforward.
 
 ---
 
-## ライセンス
+### 2. Input Guardrail — Block Before Reaching the Main Agent
 
-MIT License
+Off-topic questions are blocked before the main agent even starts processing.
+
+```python
+@input_guardrail
+async def honeymoon_guardrail(context, agent, input):
+    result = await Runner.run(guardrail_agent, input)  # Lightweight classifier agent
+    is_irrelevant = "関連なし" in result.final_output
+    return GuardrailFunctionOutput(tripwire_triggered=is_irrelevant)
+```
+
+The classification itself is handled by a separate lightweight agent (`guardrail_agent`). Blocking before the main agent runs prevents unnecessary API costs. The `InputGuardrailTripwireTriggered` exception is caught to display a friendly message in the UI.
 
 ---
 
-Powered by [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) / [Streamlit](https://streamlit.io) / [Duffel API](https://duffel.com)
+### 3. MCP — Two Different Integration Patterns
+
+This project uses two MCPs with fundamentally different characteristics.
+
+| | flights-mcp | Playwright MCP |
+|---|---|---|
+| Role | Real flight search | Real-time Google Maps via browser control |
+| Execution | `uv run` (local source) | `npx @playwright/mcp@latest` (auto-download) |
+| Injected into | Flight Agent | Schedule Agent |
+
+MCP servers are started with `async with` at runtime and injected into agents via `clone(mcp_servers=[...])`. Playwright MCP automatically falls back gracefully if startup fails.
+
+```python
+async with create_flight_mcp_server() as flight_mcp:
+    flight_agent_with_mcp = flight_agent.clone(mcp_servers=[flight_mcp])
+```
+
+---
+
+### 4. Streaming + Tool Notifications — Real-time Feedback
+
+`Runner.run_streamed()` displays text token by token, and `st.toast()` notifies the user when a tool is called.
+
+```python
+async for event in stream.stream_events():
+    if isinstance(event.data, ResponseTextDeltaEvent):
+        placeholder.markdown(response_text + "▌")   # Typing cursor effect
+    elif isinstance(event.data, ResponseOutputItemDoneEvent):
+        st.toast(f"🔧 Tool: {tool_name}")            # Show which tool was invoked
+```
+
+---
+
+### 5. Trace — Visualizing Execution Flow
+
+```python
+with trace("新婚旅行プランナー"):
+    stream = Runner.run_streamed(router_agent, messages)
+```
+
+Wrapping execution with `with trace("name")` records the full execution flow in the OpenAI Traces dashboard — which agent received the handoff, which tools were called, and how long each step took.
+
+---
+
+### 6. Plan Board — Extracting Structured Data from Natural Language
+
+Agent responses in natural language are converted to JSON via a separate LLM call and reflected in the sidebar Plan Board.
+
+```python
+async def extract_plan_data(response_text: str) -> dict:
+    # Passes response text to gpt-4o-mini to extract flight/hotel/schedule data as JSON
+```
+
+Confirmed flights and hotels are protected by a `flight_confirmed` flag to prevent them from being overwritten by subsequent conversations.
+
+---
+
+### 7. Local / Cloud Environment Auto-switching
+
+API keys are loaded from `.env` in local development and from `st.secrets` on Streamlit Cloud. MCP servers are also auto-detected: if the `mcp_servers/` folder doesn't exist (Cloud environment), they automatically switch to dummy servers (`deploy` branch).
+
+---
+
+## Tech Stack
+
+| Category | Technology |
+|---|---|
+| AI Framework | OpenAI Agents SDK |
+| LLM | GPT-4o-mini |
+| UI | Streamlit |
+| MCP | flights-mcp, Playwright MCP |
+| Monitoring | OpenAI Traces |
+| Deploy | Streamlit Cloud |
+
+---
+
+## Local Setup
+
+```bash
+git clone https://github.com/minje-sung/honeymoon-planner
+cd honeymoon-planner
+uv sync
+cp .env.example .env
+# Add your OPENAI_API_KEY to .env
+uv run streamlit run main.py
+```
+
+---
+
+[Portfolio](https://minje-sung.github.io) · [Demo](https://honeymoon-planner.streamlit.app)
