@@ -91,3 +91,4 @@ def get_destination_info(destination: str) -> str:
 
     registered = ", ".join(DESTINATION_INFO.keys())
     return f"「{destination}」の情報は現在データベースにありません。\n登録済みの目的地：{registered}\n\nウェブ検索で最新情報をお調べします。"
+

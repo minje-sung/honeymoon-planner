@@ -1020,3 +1020,4 @@ if st.session_state.pending_message:
 if user_input := st.chat_input("新婚旅行について質問してください..."):
     process_chat(user_input)
     st.rerun()
+

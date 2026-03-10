@@ -26,3 +26,4 @@ if _here not in _sdk.__path__:
     _sdk.__path__.insert(0, _here)
 
 # sys.modules["agents"]はSDKモジュールを指し続ける（意図的）
+

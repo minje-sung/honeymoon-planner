@@ -10,3 +10,4 @@ flight_agent = Agent(
     model="gpt-4o-mini",
     tools=[web_search_tool, get_destination_info],
 )
+

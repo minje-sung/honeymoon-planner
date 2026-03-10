@@ -8,3 +8,4 @@ schedule_agent = Agent(
     model="gpt-4o-mini",
     tools=[get_destination_info],
 )
+

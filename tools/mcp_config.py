@@ -37,3 +37,4 @@ def create_playwright_mcp_server():
         cache_tools_list=True,
         client_session_timeout_seconds=30,
     )
+
