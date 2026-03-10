@@ -10,3 +10,6 @@ wheels/
 .venv
 .env
 
+# ローカル調査メモ
+*_spots.md
+
